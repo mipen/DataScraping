@@ -17,10 +17,10 @@ subreddits=['wallstreetbets','algotrading','thewallstreet','tradevol','finance',
 for subreddit in subreddits:
     count=1
     allComments = []
-    ml_subreddit = reddit.subreddit(subreddit)
+    filepath="Reddit_"+subreddit + "_" + str(datetime.now().date()) + ".csv"
     print("\nProcessing", str(limit), "posts from",subreddit,"..")
 
-    for post in ml_subreddit.hot(limit=limit):
+    for post in subreddit.hot(limit=limit):
         #print("\nProcessing post ", str(count), "/", str(limit))
         s = reddit.submission(url= "https://www.reddit.com/" + post.permalink)
         s.comments.replace_more(limit=0)
@@ -40,8 +40,8 @@ for subreddit in subreddits:
                 #Schema: date (date), transactTime (timestamp), time (time), recvTime (timestamp), sender (symbol), UUIDsnd (long), recipient (string), UUIDrecip (list long), chatID (string),
                 #messageID (string), companyName (symbol), subject (string), filepath (string), sourceData (string), batch (string), assetClass (symbol), messageBody (string), 
                 #lemmas (string), tokens (string)
-                #                   date, transactTime, time,recvTime,snder,UUIDs,recip,UUIDr,chtID, messageID,compName,subject,filePth, sourceData,                                 batch, asstClss, msgBdy, lems, tokens
-                allComments.append([date, transactTime, time, recvTime, author, '', '', '', post.id, comment.id, '', post.title, '', "https://www.reddit.com" + comment.permalink, '', "reddit", body, '', ''])
+                #                   date, transactTime, time,recvTime,snder,UUIDs,recip,UUIDr,chtID, messageID,compName,subject, filePth,sourceData,batch,asstClss, msgBdy, lems, tokens
+                allComments.append([date, transactTime, time, recvTime, author, '', '', '', post.id, comment.id, '', post.title, filepath, "REDDIT", '', "reddit", body, '', ''])
 
                 print('\r',"Processing post", str(count), "/", str(limit), "(",str(curCount),"/",str(commentsCount),")",end='')
                 stdout.flush()
@@ -58,6 +58,6 @@ for subreddit in subreddits:
     'filepath','sourceData', 'batch', 'assetClass', 'messageBody', 'lemmas','tokens'])
     if(len(allComments.index) > 0):
         print("\n","Recorded", len(allComments.index), "comments.")
-        allComments.to_csv(path_or_buf="Reddit_"+subreddit + "_" + str(datetime.now().date()) + ".csv", index=False)
+        allComments.to_csv(path_or_buf=filepath, index=False)
     else:
         print("No comments found for subreddit", subreddit)
