@@ -11,7 +11,7 @@ reddit = praw.Reddit(client_id="LNE1hH6AHwBRKA",
                     username="scrapper123_",
                     user_agent="Data_Scraper")
 
-limit=200
+limit=10
 subreddits=['wallstreetbets','algotrading','thewallstreet','tradevol','finance','investing','pennystocks']
 
 for subreddit in subreddits:
@@ -20,7 +20,7 @@ for subreddit in subreddits:
     filepath="Reddit_"+subreddit + "_" + str(datetime.now().date()) + ".csv"
     print("\nProcessing", str(limit), "posts from",subreddit,"..")
 
-    for post in subreddit.hot(limit=limit):
+    for post in reddit.subreddit(subreddit).hot(limit=limit):
         #print("\nProcessing post ", str(count), "/", str(limit))
         s = reddit.submission(url= "https://www.reddit.com/" + post.permalink)
         s.comments.replace_more(limit=0)
