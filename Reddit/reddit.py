@@ -4,7 +4,6 @@ from praw.models import MoreComments
 from bs4 import BeautifulSoup
 from sys import stdout 
 from datetime import datetime
-import pdb
 
 reddit = praw.Reddit(client_id="LNE1hH6AHwBRKA",
                     client_secret="EFC-zCeMztlM7UaXq5SIxIv4WcEueA",
@@ -31,7 +30,6 @@ for subreddit in subreddits:
             try:
                 body = ''.join(BeautifulSoup(comment.body_html, "lxml").findAll(text=True)).rstrip()
                 body=body.replace("\t","").replace("\n","").replace("\r","").replace("\"","")
-                #pdb.set_trace()
                 date = (datetime.fromtimestamp(comment.created_utc)-datetime(2000,1,1)).days
                 transactTime=(comment.created_utc-datetime(2000,1,1).timestamp())*1000*1000*1000
                 dt=datetime.fromtimestamp(comment.created_utc)
