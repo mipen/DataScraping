@@ -4,6 +4,7 @@ from praw.models import MoreComments
 from bs4 import BeautifulSoup
 from sys import stdout 
 from datetime import datetime
+import pdb
 
 reddit = praw.Reddit(client_id="LNE1hH6AHwBRKA",
                     client_secret="EFC-zCeMztlM7UaXq5SIxIv4WcEueA",
@@ -11,7 +12,7 @@ reddit = praw.Reddit(client_id="LNE1hH6AHwBRKA",
                     username="scrapper123_",
                     user_agent="Data_Scraper")
 
-limit=10
+limit=20
 subreddits=['wallstreetbets','algotrading','thewallstreet','tradevol','finance','investing','pennystocks']
 
 for subreddit in subreddits:
@@ -29,6 +30,8 @@ for subreddit in subreddits:
         for comment in s.comments.list():
             try:
                 body = ''.join(BeautifulSoup(comment.body_html, "lxml").findAll(text=True)).rstrip()
+                body=body.replace("\t","").replace("\n","").replace("\r","").replace("\"","")
+                #pdb.set_trace()
                 date = (datetime.fromtimestamp(comment.created_utc)-datetime(2000,1,1)).days
                 transactTime=(comment.created_utc-datetime(2000,1,1).timestamp())*1000*1000*1000
                 dt=datetime.fromtimestamp(comment.created_utc)
@@ -40,8 +43,8 @@ for subreddit in subreddits:
                 #Schema: date (date), transactTime (timestamp), time (time), recvTime (timestamp), sender (symbol), UUIDsnd (long), recipient (string), UUIDrecip (list long), chatID (string),
                 #messageID (string), companyName (symbol), subject (string), filepath (string), sourceData (string), batch (string), assetClass (symbol), messageBody (string), 
                 #lemmas (string), tokens (string)
-                #                   date, transactTime, time,recvTime,snder,UUIDs,recip,UUIDr,chtID, messageID,compName,subject, filePth,sourceData,batch,asstClss, msgBdy, lems, tokens
-                allComments.append([date, transactTime, time, recvTime, author, '', '', '', post.id, comment.id, '', post.title, filepath, "REDDIT", '', "reddit", body, '', ''])
+                #                   transactTime, time,snder,    subject,  filePth,sourceData,asstClss,msgBdy
+                allComments.append([transactTime, time, author, post.title, filepath, "REDDIT","COM", body])
 
                 print('\r',"Processing post", str(count), "/", str(limit), "(",str(curCount),"/",str(commentsCount),")",end='')
                 stdout.flush()
@@ -54,8 +57,7 @@ for subreddit in subreddits:
     #Schema: date (date), transactTime (timestamp), time (time), recvTime (timestamp), sender (symbol), UUIDsnd (long), recipient (string), UUIDrecip (list long), chatID (string), 
     #messageID (string), companyName (symbol), subject (string), filepath (string), sourceData (string), batch (string), assetClass (symbol), messageBody (string), lemmas (string), 
     #tokens (string)
-    allComments = pd.DataFrame(allComments,columns=['date', 'transactTime', 'time', 'recvTime', 'sender', 'UUIDsnd', 'recipient', 'UUIDrecip','chatID','messageID','companyName','subject',
-    'filepath','sourceData', 'batch', 'assetClass', 'messageBody', 'lemmas','tokens'])
+    allComments = pd.DataFrame(allComments,columns=['transactTime', 'time', 'sender','subject','filepath','sourceData', 'assetClass', 'messageBody'])
     if(len(allComments.index) > 0):
         print("\n","Recorded", len(allComments.index), "comments.")
         allComments.to_csv(path_or_buf=filepath, index=False)
