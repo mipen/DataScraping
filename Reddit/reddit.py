@@ -30,7 +30,6 @@ for subreddit in subreddits:
             try:
                 body = ''.join(BeautifulSoup(comment.body_html, "lxml").findAll(text=True)).rstrip()
                 body=body.replace("\t","").replace("\n","").replace("\r","").replace("\"","")
-                date = (datetime.fromtimestamp(comment.created_utc)-datetime(2000,1,1)).days
                 transactTime=(comment.created_utc-datetime(2000,1,1).timestamp())*1000*1000*1000
                 dt=datetime.fromtimestamp(comment.created_utc)
                 author = 'Unknown'
