@@ -46,6 +46,8 @@ def determineSettings():
         HISTORICAL_PAGES_LIMIT = handleInputInt("Maximum number of pages to go back through (min 1)", HISTORICAL_PAGES_LIMIT, 1)
     if(ANY_DATE):
         s = 'all dates.'
+    elif(DATE_RANGE):
+        s = POST_DATE_MIN.strftime('%Y.%m.%d') + ' - ' + POST_DATE_MAX.strftime('%Y.%m.%d') + '.'
     else:
         s = POST_DATE.strftime('%Y.%m.%d') + '.'
     print("--- Pulling", str(POST_LIMIT), 'posts from', s,'Going back a maximum of', HISTORICAL_PAGES_LIMIT,'pages. ---')
